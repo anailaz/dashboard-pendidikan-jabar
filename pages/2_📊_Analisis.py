@@ -444,7 +444,7 @@ with tab4:
             return f'background-color: {COLORS["secondary"]}; color: #000000;'
         return 'color: #000000;'
     
-    styled_df = display_df.style.applymap(
+    styled_df = display_df.style.map(
         highlight_cluster,
         subset=[col for col in display_df.columns if col.startswith('cluster_')]
     )
