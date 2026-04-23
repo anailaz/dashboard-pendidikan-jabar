@@ -71,7 +71,7 @@ with tab1:
             key="data_year_select"
         )
     with col3:
-        n_rows = st.selectbox("Jumlah Baris", [10, 25, 50, 100], index=0, key="rows_select")
+        n_rows = st.selectbox("Jumlah Baris", [10, 25, 50, 100, 135], index=0, key="rows_select")
     
     # Filter data untuk tabel
     if selected_year_data == "Semua Tahun":
@@ -139,7 +139,7 @@ with tab2:
     # 1. Tentukan Top 5 dan Top 10 berdasarkan HLS tahun 2025
     df_2025_hls = df[df['tahun'] == 2025].sort_values('hls', ascending=False)
     top5_hls = df_2025_hls.head(5)['namobj'].tolist()
-    top10_hls = df_2025_hls.head(10)['namobj'].tolist()
+    top10_hls = df_2025_hls.tail(5)['namobj'].tolist()
     
     # 2. Buat trace/garis untuk SEMUA wilayah
     fig_hls = px.line(
@@ -159,13 +159,13 @@ with tab2:
     # 4. Buat menu dropdown
     dropdown_buttons_hls = [
         dict(
-            label='Top 5 (HLS Tertinggi 2025)',
+            label='5 HLS Tertinggi',
             method='update',
             args=[{'visible': [name in top5_hls for name in trace_names_hls]},
                   {'title': 'Tren Harapan Lama Sekolah - Top 5 Wilayah'}]
         ),
         dict(
-            label='Top 10 (HLS Tertinggi 2025)',
+            label='5 HLS Terendah',
             method='update',
             args=[{'visible': [name in top10_hls for name in trace_names_hls]},
                   {'title': 'Tren Harapan Lama Sekolah - Top 10 Wilayah'}]
@@ -196,6 +196,14 @@ with tab2:
         font=dict(color='#000000')
     )
     
+    # Setelah fig_hls.update_layout(...)
+    fig_hls.update_xaxes(
+        tickmode='array',
+        tickvals=[2021, 2022, 2023, 2024, 2025],
+        ticktext=['2021', '2022', '2023', '2024', '2025'],
+        type='category'
+    )
+
     # 6. Set tampilan awal Top 5
     for trace in fig_hls.data:
         trace.visible = trace.name in top5_hls
@@ -203,91 +211,54 @@ with tab2:
     st.plotly_chart(fig_hls, use_container_width=True)
     
     st.markdown("---")
-    
-    # GRAFIK RLS (DENGAN DROPDOWN 5 REPRESENTATIF/TOP 5/TERENDAH/SEMUA)
+
+    # GRAFIK RLS
     st.markdown("#### 📖 Tren Rata-rata Lama Sekolah (RLS)")
     
-    # 1. Perhitungan Kategori Wilayah Berdasarkan RLS Tahun 2025
     df_2025_rls = df[df['tahun'] == 2025].sort_values('rls', ascending=False)
-    
     top5_rls = df_2025_rls.head(5)['namobj'].tolist()
     low5_rls = df_2025_rls.tail(5)['namobj'].tolist()
     
-    # Kategori 5 Representatif (Top 2, Low 2, Median)
-    top2_rls = df_2025_rls.head(2)['namobj'].tolist()
-    low2_rls = df_2025_rls.tail(2)['namobj'].tolist()
-    median_val_rls = df_2025_rls['rls'].median()
-    median_city_rls = df_2025_rls.iloc[(df_2025_rls['rls'] - median_val_rls).abs().argsort()[:1]]['namobj'].values[0]
-    rep5_rls = top2_rls + low2_rls + [median_city_rls]
-    
-    # 2. Buat trace untuk semua wilayah
     fig_rls = px.line(
-        df,
-        x='tahun',
-        y='rls',
-        color='namobj',
-        markers=True,
+        df, x='tahun', y='rls', color='namobj', markers=True,
         title='Tren Rata-rata Lama Sekolah (RLS) di Jawa Barat',
         labels={'rls': 'RLS (tahun)', 'tahun': 'Tahun', 'namobj': 'Wilayah'},
         color_discrete_sequence=px.colors.qualitative.Set2
     )
     
-    # 3. Ambil urutan nama wilayah
     trace_names_rls = [trace.name for trace in fig_rls.data]
     
-    # 4. Buat menu dropdown
     dropdown_buttons_rls = [
-        dict(
-            label='5 Representatif (Tinggi, Rendah, Median)',
-            method='update',
-            args=[{'visible': [name in rep5_rls for name in trace_names_rls]},
-                  {'title': 'Tren RLS - 5 Wilayah Representatif'}]
-        ),
-        dict(
-            label='Top 5 Tertinggi (RLS 2025)',
-            method='update',
+        dict(label='5 RLS Tertinggi', method='update',
             args=[{'visible': [name in top5_rls for name in trace_names_rls]},
-                  {'title': 'Tren RLS - Top 5 Wilayah Tertinggi'}]
-        ),
-        dict(
-            label='5 Terendah (RLS 2025)',
-            method='update',
+                  {'title': 'Tren RLS - Top 5 Wilayah Tertinggi'}]),
+        dict(label='5 RLS Terendah', method='update',
             args=[{'visible': [name in low5_rls for name in trace_names_rls]},
-                  {'title': 'Tren RLS - 5 Wilayah Terendah'}]
-        ),
-        dict(
-            label='Semua Wilayah',
-            method='update',
+                  {'title': 'Tren RLS - 5 Wilayah Terendah'}]),
+        dict(label='Semua Wilayah', method='update',
             args=[{'visible': [True] * len(trace_names_rls)},
-                  {'title': 'Tren RLS - Semua Wilayah'}]
-        )
+                  {'title': 'Tren RLS - Semua Wilayah'}])
     ]
     
-    # 5. Terapkan dropdown
     fig_rls.update_layout(
-        updatemenus=[dict(
-            active=0,
-            buttons=dropdown_buttons_rls,
-            x=1.15,
-            y=1.15,
-            xanchor='right',
-            yanchor='top'
-        )],
-        height=450,
-        hovermode='x unified',
-        legend_title_text='Wilayah',
-        plot_bgcolor='rgba(0,0,0,0)',
-        paper_bgcolor='rgba(0,0,0,0)',
+        updatemenus=[dict(active=0, buttons=dropdown_buttons_rls,
+                          x=1.15, y=1.15, xanchor='right', yanchor='top')],
+        height=450, hovermode='x unified', legend_title_text='Wilayah',
+        plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)',
         font=dict(color='#000000')
     )
     
-    # 6. Set tampilan awal 5 Representatif
+    fig_rls.update_xaxes(
+        tickmode='array',
+        tickvals=[2021, 2022, 2023, 2024, 2025],
+        ticktext=['2021', '2022', '2023', '2024', '2025'],
+        type='category'
+    )
+    
     for trace in fig_rls.data:
-        trace.visible = trace.name in rep5_rls
+        trace.visible = trace.name in top5_rls
     
     st.plotly_chart(fig_rls, use_container_width=True)
-    
-    st.markdown("---")
     
     # GRAFIK AMH (DENGAN DROPDOWN TOP 5/10/REPRESENTATIF/TERENDAH/SEMUA)
     st.markdown("#### ✍️ Tren Angka Melek Huruf (AMH)")
@@ -296,16 +267,8 @@ with tab2:
     df_2025_amh = df[df['tahun'] == 2025].sort_values('amh', ascending=False)
     
     top5_amh = df_2025_amh.head(5)['namobj'].tolist()
-    top10_amh = df_2025_amh.head(10)['namobj'].tolist()
     low5_amh = df_2025_amh.tail(5)['namobj'].tolist()
-    
-    # 5 Representatif (Top 2, Bottom 2, Median)
-    top2_amh = df_2025_amh.head(2)['namobj'].tolist()
-    bottom2_amh = df_2025_amh.tail(2)['namobj'].tolist()
-    median_amh_val = df_2025_amh['amh'].median()
-    median_amh_city = df_2025_amh.iloc[(df_2025_amh['amh'] - median_amh_val).abs().argsort()[:1]]['namobj'].values[0]
-    rep5_amh = top2_amh + bottom2_amh + [median_amh_city]
-    
+
     # 2. Buat trace untuk semua wilayah
     fig_amh = px.line(
         df,
@@ -324,28 +287,16 @@ with tab2:
     # 4. Buat menu dropdown
     dropdown_buttons_amh = [
         dict(
-            label='Top 5 (AMH Tertinggi 2025)',
+            label='5 AMH Tertinggi',
             method='update',
             args=[{'visible': [name in top5_amh for name in trace_names_amh]},
                   {'title': 'Tren Angka Melek Huruf - Top 5 Wilayah Tertinggi'}]
         ),
         dict(
-            label='Top 10 (AMH Tertinggi 2025)',
-            method='update',
-            args=[{'visible': [name in top10_amh for name in trace_names_amh]},
-                  {'title': 'Tren Angka Melek Huruf - Top 10 Wilayah Tertinggi'}]
-        ),
-        dict(
-            label='5 Representatif (Tinggi, Rendah, Median)',
-            method='update',
-            args=[{'visible': [name in rep5_amh for name in trace_names_amh]},
-                  {'title': 'Tren Angka Melek Huruf - 5 Wilayah Representatif'}]
-        ),
-        dict(
-            label='5 Terendah (AMH Terendah 2025)',
+            label='5 AMH Terendah',
             method='update',
             args=[{'visible': [name in low5_amh for name in trace_names_amh]},
-                  {'title': 'Tren Angka Melek Huruf - 5 Wilayah Terendah'}]
+                  {'title': 'Tren Angka Melek Huruf - 5 Wilayah Representatif'}]
         ),
         dict(
             label='Semua Wilayah',
@@ -371,6 +322,14 @@ with tab2:
         plot_bgcolor='rgba(0,0,0,0)',
         paper_bgcolor='rgba(0,0,0,0)',
         font=dict(color='#000000')
+    )
+
+    # Setelah fig_amh.update_layout(...)
+    fig_amh.update_xaxes(
+        tickmode='array',
+        tickvals=[2021, 2022, 2023, 2024, 2025],
+        ticktext=['2021', '2022', '2023', '2024', '2025'],
+        type='category'
     )
     
     # 6. Set tampilan awal Top 5
@@ -428,32 +387,7 @@ with tab4:
     with st.spinner("Melakukan clustering..."):
         cluster_results = perform_clustering_all_years(df)
     
-    # Tabel hasil clustering
-    st.markdown("#### 📋 Hasil Clustering per Wilayah")
-    
-    display_df = cluster_results.drop('Silhouette Score', errors='ignore')
-    
-    # Styling dataframe
-    # Styling dataframe untuk clustering
-    def highlight_cluster(val):
-        if val == 'Rendah':
-            return f'background-color: {COLORS["accent"]}; color: #000000; font-weight: bold;'
-        elif val == 'Sedang':
-            return f'background-color: {COLORS["primary"]}; color: #000000;'
-        elif val == 'Tinggi':
-            return f'background-color: {COLORS["secondary"]}; color: #000000;'
-        return 'color: #000000;'
-    
-    styled_df = display_df.style.map(
-        highlight_cluster,
-        subset=[col for col in display_df.columns if col.startswith('cluster_')]
-    )
-    
-    st.dataframe(styled_df, use_container_width=True)
-    
-    # Scatter plot clustering
-    st.markdown("#### 🎯 Segmentasi Wilayah")
-    
+    # Scatter plot clustering    
     df_cluster_all = pd.DataFrame()
     for year in range(2021, 2026):
         df_year = df[df['tahun'] == year].copy()
