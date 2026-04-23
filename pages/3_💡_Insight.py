@@ -135,79 +135,27 @@ st.markdown(f"""
 <div style="background: {COLORS['background']}; border-radius: 12px; padding: 1.8rem; 
             margin-bottom: 1.5rem; border-left: 4px solid #e74c3c;">
     <p style="color: #000000; line-height: 1.9; font-size: 1.05rem;">
-        Analisis data menunjukkan adanya kesenjangan yang persisten antara wilayah perkotaan dan kabupaten di Jawa Barat. 
-        Rasio ketimpangan RLS mencapai 1,57 kali antara wilayah tertinggi dan terendah, dengan selisih absolut sebesar 
+        Analisis data menunjukkan adanya kesenjangan antara wilayah perkotaan dan kabupaten di Jawa Barat. 
+        Rasio ketimpangan RLS mencapai 1,57 kali antara wilayah tertinggi Kota Bekasi dan wilayah terendah Kabupaten Indramayu, dengan selisih absolut sebesar 
         4,40 tahun pendidikan (setara dengan tidak tamat SD hingga hampir tamat SMP).
     </p>
 </div>
 """, unsafe_allow_html=True)
 
-col1, col2 = st.columns(2)
-
-with col1:
-    st.markdown(f"""
-    <div style="background: {COLORS['background']}; border-radius: 12px; padding: 1.5rem; 
-                border-top: 3px solid #e74c3c; height: 100%;">
-        <h5 style="color: #000000; margin-bottom: 1rem;">⚠️ Wilayah Prioritas Intervensi</h5>
-        <p style="color: #000000; line-height: 1.8; margin-bottom: 0.8rem;">
-            Berdasarkan nilai RLS terendah tahun 2025, lima wilayah yang membutuhkan 
-            perhatian khusus adalah:
-        </p>
-        <ol style="color: #000000; line-height: 1.8; margin-bottom: 1rem;">
-            <li><strong>Indramayu</strong> – 7,67 tahun</li>
-            <li><strong>Tasikmalaya</strong> – 8,15 tahun</li>
-            <li><strong>Cianjur</strong> – 8,17 tahun</li>
-            <li><strong>Subang</strong> – 8,19 tahun</li>
-            <li><strong>Garut</strong> – 8,22 tahun</li>
-        </ol>
-        <p style="color: #000000; line-height: 1.8;">
-            Kelima wilayah ini seluruhnya merupakan kabupaten, bukan kota, yang menunjukkan 
-            adanya kesenjangan struktural antara daerah urban dan rural.
-        </p>
-    </div>
-    """, unsafe_allow_html=True)
-
-with col2:
-    st.markdown(f"""
-    <div style="background: {COLORS['background']}; border-radius: 12px; padding: 1.5rem; 
-                border-top: 3px solid #27ae60; height: 100%;">
-        <h5 style="color: #000000; margin-bottom: 1rem;">🏆 Wilayah Model (Best Practice)</h5>
-        <p style="color: #000000; line-height: 1.8; margin-bottom: 0.8rem;">
-            Wilayah dengan capaian pendidikan terbaik yang dapat dijadikan acuan:
-        </p>
-        <ul style="color: #000000; line-height: 1.8; margin-bottom: 1rem;">
-            <li><strong>Kota Bekasi</strong> – RLS 12,07 tahun (tertinggi)</li>
-            <li><strong>Kota Depok</strong> – RLS 11,78 tahun</li>
-            <li><strong>Kota Bandung</strong> – RLS 11,37 tahun</li>
-            <li><strong>Bekasi (Kab)</strong> – Persentase SMA 49,24% (tertinggi)</li>
-            <li><strong>Ciamis</strong> – HLS 14,50 tahun (tertinggi)</li>
-        </ul>
-        <p style="color: #000000; line-height: 1.8;">
-            Strategi dan kebijakan pendidikan di wilayah-wilayah ini perlu dipelajari dan 
-            direplikasi ke daerah lain, terutama kabupaten yang masih tertinggal.
-        </p>
-    </div>
-    """, unsafe_allow_html=True)
-
-# KESIMPULAN
-st.markdown("### 📌 Kesimpulan")
+# ============================================================================
+# INSIGHT 4: INTERPRETASI HASIL CLUSTERING
+# ============================================================================
+st.markdown("### 🔬 Interpretasi Hasil Clustering")
 
 st.markdown(f"""
-<div style="background: {COLORS['primary']}20; border-radius: 12px; padding: 1.8rem; 
-            margin: 1.5rem 0; border: 1px solid {COLORS['primary']}40;">
+<div style="background: {COLORS['background']}; border-radius: 12px; padding: 1.8rem; 
+            margin-bottom: 1.5rem; border-left: 4px solid #9b59b6;">
     <p style="color: #000000; line-height: 1.9; font-size: 1.05rem;">
-        Jawa Barat telah mencapai kemajuan yang signifikan dalam aspek melek huruf dengan AMH 
-        mendekati 100%. Namun, tantangan utama masih terletak pada <strong>pemerataan akses 
-        pendidikan</strong> (kesenjangan kota-kabupaten) dan <strong>peningkatan jenjang 
-        pendidikan</strong> (RLS masih di bawah 10 tahun). Keberhasilan di masa depan akan 
-        sangat bergantung pada kemampuan pemerintah daerah untuk:
+        Hasil clustering K-Means (K=3) menunjukkan polarisasi tajam antara kota dan kabupaten. 
+        Cluster <strong>Tinggi</strong> (6 wilayah) didominasi kota besar seperti Bekasi, Depok, Bandung, dan Cimahi. 
+        Cluster <strong>Sedang</strong> (13 wilayah) mencakup campuran kota kecil dan kabupaten berkembang seperti Bogor, Bandung, Karawang, dan Sumedang. 
+        Sementara cluster <strong>Rendah</strong> (8 wilayah) seluruhnya kabupaten, dengan Indramayu, Cirebon, dan Subang yang konsisten tertinggal sepanjang 2021-2025.
     </p>
-    <ul style="color: #000000; line-height: 1.9; font-size: 1.05rem; margin-top: 1rem; padding-left: 1.5rem;">
-        <li>Memfokuskan sumber daya pada wilayah-wilayah tertinggal</li>
-        <li>Mempercepat implementasi wajib belajar 12 tahun</li>
-        <li>Mereplikasi praktik terbaik dari kota-kota yang sudah maju</li>
-        <li>Mengadopsi pendekatan yang mempertimbangkan kesenjangan antar generasi</li>
-    </ul>
 </div>
 """, unsafe_allow_html=True)
 
